@@ -1,0 +1,71 @@
+from sys import argv
+
+def main():
+    # Sample code to read inputs from the file
+    if len(argv) != 2:
+        raise Exception("File path not entered")
+    file_path = argv[1]
+    f = open(file_path, 'r')
+    data  = {"TSHIRT":{"Price":1000,"Dis":10},
+                "JACKET":{"Price":2000,"Dis":5},
+                "CAP":{"Price":500,"Dis":20},
+                "NOTEBOOK":{"Price":200,"Dis":20},
+                "PENS":{"Price":300,"Dis":10},
+                "MARKERS":{"Price":500,"Dis":5}}
+    cart = []
+    out = []
+    x = []
+    lines = f.readlines()
+    for line in lines:
+        a = line.split()
+        if(a[0]=="ADD_ITEM"):
+            clothing = ["TSHIRT","JACKET","CAP"]
+            stat = ["NOTEBOOK","PENS","MARKERS"]
+            name = a[1]
+            quantity = int(a[2])
+            if((name in clothing and quantity <= 2) or (name in stat and quantity <= 3)):
+                b = [name,quantity]
+                cart.append(b)
+                out.append("ITEM_ADDED")
+            else:
+                out.append("ERROR_QUANTITY_EXCEEDED")
+                x.append(name)
+            
+        elif(a[0]=="PRINT_BILL"):
+            for i in out:
+                print(i)
+            final = 0
+            discount = 0
+            c = []
+            mtp = 0
+            for k in cart:
+                p = data[k[0]]["Price"]
+                mtp += (p * k[1])
+            if mtp >= 1000:
+                for j in cart:
+                    p = data[j[0]]["Price"]
+                    d = data[j[0]]["Dis"]
+                    dp = ((d/100)*p) * j[1]
+                    pd = (p * j[1]) - (dp)
+                    c.append(pd)
+                    discount += dp
+                    final += pd
+            else :
+                final = mtp
+            realfinal = 0
+            if final >= 3000:
+                for i in c:
+                    dd = (5/100)*i
+                    z = i - dd
+                    discount += dd
+                    realfinal += z
+            else:
+                realfinal = final
+            tax = realfinal + ((10/100)*realfinal)
+            print("TOTAL_DISCOUNT",round(discount,2))
+            print("TOTAL_AMOUNT_TO_PAY",round(tax,2))
+
+
+    
+if _name_ == "_main_":
+    main()
